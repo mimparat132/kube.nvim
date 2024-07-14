@@ -1,8 +1,17 @@
-require("kube.find_path")
+local kube = require("kube.find_path")
 
 local M = {}
 
-M.get_yq_path = Get_yq_path()
-M.get_kustomize_path = Get_kustomize_path()
+function M.get_yq_path()
+    local find_opts = {}
+    find_opts["syntax"] = "yq"
+    kube.find_path(find_opts)
+end
+
+function M.get_kustomize_path()
+    local find_opts = {}
+    find_opts["syntax"] = "kustomize"
+    kube.find_path(find_opts)
+end
 
 return M

@@ -386,15 +386,3 @@ local function find_path(find_opts)
     -- for now just print the found path to the console
     print(path_table[1])
 end
-
-function Get_kustomize_path()
-    local find_opts = {}
-    find_opts["syntax"] = "kustomize"
-    find_path(find_opts)
-end
-
-function Get_yq_path()
-    local find_opts = {}
-    find_opts["syntax"] = "yq"
-    find_path(find_opts)
-end
