@@ -7,6 +7,7 @@ version = MODREV .. SPECREV
 package = 'kube'
 source = {
       url = 'git://github.com/mimparat132/kube.nvim.git',
+      tag = "1.0.0",
 }
 
 description = {
