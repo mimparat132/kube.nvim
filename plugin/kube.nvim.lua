@@ -1,3 +1,5 @@
+require("kube.nvim.find_path")
+
 local M = {}
 
 M.get_yq_path = Get_yq_path()
