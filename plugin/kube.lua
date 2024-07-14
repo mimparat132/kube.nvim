@@ -1,4 +1,4 @@
-require("kube.nvim.find_path")
+require("kube.find_path")
 
 local M = {}
 
