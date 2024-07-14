@@ -2,6 +2,8 @@ local yaml = require('lyaml')
 -- Set the default notify function to nvim.notify
 vim.notify = require("notify")
 
+local M = {}
+
 local function mysplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -319,7 +321,7 @@ end
 --      "kustomize"
 -- Find_path() will copy the search string to your global buffer and
 -- use notify to signal to the user what path it has copied to the clipboard
-local function find_path(find_opts)
+function M.find_path(find_opts)
     -- Grab the current line the cursor is on when the function is executed
     local cur_line = vim.api.nvim_get_current_line()
     -- Tokenize the current line into a table
@@ -386,3 +388,5 @@ local function find_path(find_opts)
     -- for now just print the found path to the console
     print(path_table[1])
 end
+
+return M
