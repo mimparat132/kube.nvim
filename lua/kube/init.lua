@@ -1,4 +1,4 @@
-local kube = require("kube.find_path")
+local kube = require("find_path")
 
 local M = {}
 
