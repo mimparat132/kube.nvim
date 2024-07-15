@@ -6,7 +6,7 @@
 
 - kube.nvim uses the lyaml luarock. lyaml is a wrapper around the libyaml implementation ( written in C ). In order to use the lyaml rock, you need to have `libyaml` installed on your system.
 ```bash
-$ sudo apt-get install libyaml-dev
+sudo apt-get install libyaml-dev
 ```
 
 ### `lazy.nvim`
