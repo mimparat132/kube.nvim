@@ -69,33 +69,13 @@ function Recursive_print(table)
     end
 end
 
-local function base64_decrypt(string)
-    local decoded = base64.decode(string)
-
-    if decoded == nil then
-        error("unable to base64 decode input string")
-    end
-
-    return decoded
-end
-
-local function base64_encrypt(string)
-    local encoded = base64.decode(string)
-
-    if encoded == nil then
-        error("unable to base64 encode input string")
-    end
-
-    return encoded
-end
-
 function M.decrypt_line()
     local cur_line = vim.api.nvim_get_current_line()
     local line_table = mysplit(cur_line, " ")
     P(line_table)
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
-            local ok, decoded = pcall(base64_decrypt(line_table[index + 1]))
+            local ok, decoded = pcall(base64.decode(line_table[index + 1]))
             if ok then
                 print(ok)
                 return
@@ -116,7 +96,7 @@ function M.encrypt_line()
     local line_table = mysplit(cur_line, " ")
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
-            local ok, encoded = pcall(base64_decrypt(line_table[index + 1]))
+            local ok, encoded = pcall(base64.encode(line_table[index + 1]))
             if ok then
                 print(ok)
                 return
