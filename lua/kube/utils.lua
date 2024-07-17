@@ -121,7 +121,7 @@ function Recursive_print(table)
     end
 end
 
-function M.unencrypt_line()
+function M.decrypt_line()
     local cur_line = vim.api.nvim_get_current_line()
     local line_table = mysplit(cur_line," ")
     for index, value in ipairs(line_table) do
