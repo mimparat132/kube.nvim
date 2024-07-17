@@ -2,6 +2,12 @@ local yaml = require('lyaml')
 -- Set the default notify function to nvim.notify
 vim.notify = require("notify")
 
+local function vim_undo()
+    local opts = {}
+    opts.output = false
+    vim.api.nvim_exec2('u',opts)
+end
+
 local M = {}
 
 local function mysplit(inputstr, sep)
@@ -346,7 +352,9 @@ function M.find_path(find_opts)
     -- restore the current line after loading in the buffer with the
     -- inserted needle
     -- This should restore the file to the state before the function was called
-    vim.api.nvim_set_current_line(cur_line)
+    -- Try to undo the change instead of writing a new line
+    -- Call custom undo command
+    vim_undo()
     -- Based on the string type pick a search function
     -- Search function will return the build path
     local path_table = {}
