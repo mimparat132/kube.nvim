@@ -72,35 +72,38 @@ end
 function M.decrypt_line()
     local cur_line = vim.api.nvim_get_current_line()
     local line_table = mysplit(cur_line, " ")
-    P(line_table)
+    local decoded_value
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
             local decoded = base64.decode(line_table[index + 1])
             line_table[index + 1] = " " .. decoded
+            decoded_value = decoded
         end
     end
     local new_line = ""
     for _, value in ipairs(line_table) do
         new_line = new_line .. value
     end
-    vim.fn.setreg("+Y", new_line)
+    vim.fn.setreg("+Y", decoded_value)
     vim.api.nvim_set_current_line(new_line)
 end
 
 function M.encrypt_line()
     local cur_line = vim.api.nvim_get_current_line()
     local line_table = mysplit(cur_line, " ")
+    local encoded_value
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
             local encoded = base64.encode(line_table[index + 1])
             line_table[index + 1] = " " .. encoded
+            encoded_value = encoded
         end
     end
     local new_line = ""
     for _, value in ipairs(line_table) do
         new_line = new_line .. value
     end
-    vim.fn.setreg("+Y", new_line)
+    vim.fn.setreg("+Y", encoded_value)
     vim.api.nvim_set_current_line(new_line)
 end
 
