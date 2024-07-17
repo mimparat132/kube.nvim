@@ -75,11 +75,8 @@ function M.decrypt_line()
     P(line_table)
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
-            local ok, decoded = pcall(base64.decode(line_table[index + 1]))
-            print(ok)
-            print(decoded)
-            return
-            -- line_table[index + 1] = " " .. decoded
+            local decoded = base64.decode(line_table[index + 1])
+            line_table[index + 1] = " " .. decoded
         end
     end
     local new_line = ""
@@ -95,11 +92,8 @@ function M.encrypt_line()
     local line_table = mysplit(cur_line, " ")
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
-            local ok, encoded = pcall(base64.encode(line_table[index + 1]))
-            print(ok)
-            print(encoded)
-            -- line_table[index + 1] = " " .. encoded
-            return
+            local encoded = base64.encode(line_table[index + 1])
+            line_table[index + 1] = " " .. encoded
         end
     end
     local new_line = ""
