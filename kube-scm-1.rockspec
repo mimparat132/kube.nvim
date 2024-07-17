@@ -22,5 +22,6 @@ description = {
 dependencies = {
    "lua == 5.1",
    "lyaml",
+   "base64",
 }
 build = {}

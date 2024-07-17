@@ -1,8 +1,7 @@
 local yaml = require('lyaml')
+local base64 = require('base64')
 -- Set the default notify function to nvim.notify
 vim.notify = require("notify")
-
-local M = {}
 
 local function mysplit(inputstr, sep)
     if sep == nil then
@@ -21,6 +20,38 @@ local function mysplit(inputstr, sep)
     return t
 end
 
+local function vim_undo()
+    local opts = {}
+    opts.output = false
+    vim.api.nvim_exec2('u', opts)
+end
+
+P = function(v)
+    print(vim.inspect(v))
+    return v
+end
+
+local M = {}
+
+function M.read_k8s_metadata()
+    local current_buf_content     = vim.api.nvim_buf_get_lines(0, 0, vim.api.nvim_buf_line_count(0), false)
+    local current_buf_string      = table.concat(current_buf_content, "\n")
+    local yaml_data               = yaml.load(current_buf_string)
+    local kind                    = yaml_data["kind"]
+    local name                    = yaml_data["metadata"]["name"]
+    local apiVersion              = yaml_data["apiVersion"]
+    local split_api_version_table = mysplit(apiVersion, "/")
+    local group                   = split_api_version_table[1]
+    local version                 = split_api_version_table[2]
+    local dump_str                = yaml.dump({ { { target = { group = group, version = version, kind = kind, name = name } } } })
+
+    -- Cut off the leading "...\n" and trailing "---\n"
+    local output_yaml             = string.sub(dump_str, 5, -1)
+    output_yaml                   = string.sub(output_yaml, 1, -6)
+    vim.fn.setreg("+Y", output_yaml)
+    vim.notify("Copied to clipboard:\n" .. "{\n" .. output_yaml .. "\n}", vim.log.levels.INFO, { stages = "fade" })
+end
+
 function Recursive_print(table)
     for key, value in pairs(table) do
         if type(value) == "table" then
@@ -36,6 +67,44 @@ function Recursive_print(table)
             end
         end
     end
+end
+
+function M.decrypt_line()
+    local cur_line = vim.api.nvim_get_current_line()
+    local line_table = mysplit(cur_line, " ")
+    local decoded_value
+    for index, value in ipairs(line_table) do
+        if (string.match(value, ":$") ~= nil) then
+            local decoded = base64.decode(line_table[index + 1])
+            line_table[index + 1] = " " .. decoded
+            decoded_value = decoded
+        end
+    end
+    local new_line = ""
+    for _, value in ipairs(line_table) do
+        new_line = new_line .. value
+    end
+    vim.fn.setreg("+Y", decoded_value)
+    vim.api.nvim_set_current_line(new_line)
+end
+
+function M.encrypt_line()
+    local cur_line = vim.api.nvim_get_current_line()
+    local line_table = mysplit(cur_line, " ")
+    local encoded_value
+    for index, value in ipairs(line_table) do
+        if (string.match(value, ":$") ~= nil) then
+            local encoded = base64.encode(line_table[index + 1])
+            line_table[index + 1] = " " .. encoded
+            encoded_value = encoded
+        end
+    end
+    local new_line = ""
+    for _, value in ipairs(line_table) do
+        new_line = new_line .. value
+    end
+    vim.fn.setreg("+Y", encoded_value)
+    vim.api.nvim_set_current_line(new_line)
 end
 
 -- DOCUMENTATION
@@ -346,7 +415,9 @@ function M.find_path(find_opts)
     -- restore the current line after loading in the buffer with the
     -- inserted needle
     -- This should restore the file to the state before the function was called
-    vim.api.nvim_set_current_line(cur_line)
+    -- Try to undo the change instead of writing a new line
+    -- Call custom undo command
+    vim_undo()
     -- Based on the string type pick a search function
     -- Search function will return the build path
     local path_table = {}
