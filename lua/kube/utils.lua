@@ -2,14 +2,6 @@ local yaml = require('lyaml')
 -- Set the default notify function to nvim.notify
 vim.notify = require("notify")
 
-local function vim_undo()
-    local opts = {}
-    opts.output = false
-    vim.api.nvim_exec2('u',opts)
-end
-
-local M = {}
-
 local function mysplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -25,6 +17,90 @@ local function mysplit(inputstr, sep)
         table.insert(t, str)
     end
     return t
+end
+
+local function vim_undo()
+    local opts = {}
+    opts.output = false
+    vim.api.nvim_exec2('u',opts)
+end
+
+P = function(v)
+    print(vim.inspect(v))
+    return v
+end
+
+local yaml_test_data = [[
+# 1 Top level map with key value
+apiVersion: networking.k8s.io/v1
+kind: Ingress # some stuff here
+metadata:
+  # 2 Indented object key
+  annotations:
+    # 3 indented map with key value
+    cert-manager.io/cluster-issuer: acme # This will attempt to automatically generate a cert.
+    acme.cert-manager.io/http01-edit-in-place: "true" # This makes the HTTP01 handler more robust.
+    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+  labels:
+    app: uxguide-site
+  name: uxguide-site
+  namespace: uxguide
+spec:
+  ingressClassName: "nginx"
+  rules: # This shouldn't be here
+  # 4 array with key value
+    - host: uxguide-temp.k8s.epic.com # What about this
+      http:
+        paths:
+          # 5 Array object key
+          - backend: # some stuff
+              service:
+                name: uxguide-site # This needs to match an existing service name in the same namespace as this ingress
+                port:
+                  name: webhttp # This needs to match an existing port name in this service
+            path: /
+            pathType: Prefix
+    - host: uxguide-temp.k8s.epic.com # some other stiff
+      http:
+        paths:
+          - backend:
+              service:
+                name: uxguide-site # This needs to match an existing service name in the same namespace as this ingress
+                port:
+                  name: webhttp # This needs to match an existing port name in this service
+            path: /
+            pathType: Prefix
+  tls: # The list of hosts needs to match the rules above for ACME to work
+    - hosts:
+      # 6 Array value only
+        - uxguide-temp.k8s.epic.com
+      secretName: "What happens when you make a quoted string" # also a comment
+...
+]]
+
+local M = {}
+
+function M.read_k8s_metadata()
+
+    -- Read the current buff
+    local current_buf_content = vim.api.nvim_buf_get_lines(0, 0, vim.api.nvim_buf_line_count(0), false)
+    local current_buf_string = table.concat(current_buf_content, "\n")
+    local yaml_data = yaml.load(current_buf_string)
+    -- Print out the table
+    -- P(yaml_data)
+    local kind = yaml_data["kind"]
+    local name  = yaml_data["metadata"]["name"]
+    local apiVersion = yaml_data["apiVersion"]
+    local split_api_version_table = mysplit(apiVersion,"/")
+    local group = split_api_version_table[1]
+    local version = split_api_version_table[2]
+    local dump_str = yaml.dump({
+        {{target = { group  = group,version = version, kind = kind, name  = name }}}})
+
+    local output_yaml = string.sub(dump_str, 5, -1)
+    output_yaml = string.sub(output_yaml,1,-6)
+    vim.fn.setreg("+Y", output_yaml)
+    vim.notify("Copied to clipboard:\n" .. "{\n" .. output_yaml .. "\n}", vim.log.levels.INFO, { stages = "fade" })
 end
 
 function Recursive_print(table)

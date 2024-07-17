@@ -14,4 +14,8 @@ function M.get_kustomize_path()
     utils.find_path(find_opts)
 end
 
+function M.get_k8s_metadata()
+    utils.read_k8s_metadata()
+end
+
 return M
