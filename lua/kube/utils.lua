@@ -135,7 +135,7 @@ function M.decrypt_line()
         new_line = new_line .. value
     end
     vim.fn.setreg("+Y", new_line)
-    print(new_line)
+    vim.api.nvim_set_current_line(new_line)
 end
 
 function M.encrypt_line()
@@ -152,7 +152,7 @@ function M.encrypt_line()
         new_line = new_line .. value
     end
     vim.fn.setreg("+Y", new_line)
-    print(new_line)
+    vim.api.nvim_set_current_line(new_line)
 end
 
 -- DOCUMENTATION
