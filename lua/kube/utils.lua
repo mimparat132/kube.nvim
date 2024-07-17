@@ -96,7 +96,7 @@ function M.decrypt_line()
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
             local ok, decoded = pcall(base64_decrypt(line_table[index + 1]))
-            if not ok then
+            if ok then
                 print(ok)
                 return
             end
@@ -117,7 +117,7 @@ function M.encrypt_line()
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
             local ok, encoded = pcall(base64_decrypt(line_table[index + 1]))
-            if not ok then
+            if ok then
                 print(ok)
                 return
             end
