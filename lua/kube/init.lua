@@ -18,4 +18,12 @@ function M.get_k8s_metadata()
     utils.read_k8s_metadata()
 end
 
+function M.encrypt_line()
+    utils.encrypt_line()
+end
+
+function M.decrypt_line()
+    utils.decrypt_line()
+end
+
 return M
