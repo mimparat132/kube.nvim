@@ -75,6 +75,7 @@ function M.decrypt_line()
     P(line_table)
     for index, value in ipairs(line_table) do
         if (string.match(value, ":$") ~= nil) then
+            print(line_table[index+1])
             local decoded = base64.decode(line_table[index + 1])
             line_table[index + 1] = " " .. decoded
         end
