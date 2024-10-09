@@ -1,4 +1,4 @@
-[![LuaRocks](https://img.shields.io/luarocks/v/neovim/nvim-lspconfig?logo=lua&color=purple)](https://https://luarocks.org/modules/mimparat132/kube.nvim)
+[![LuaRocks](https://img.shields.io/luarocks/v/mimparat132/kube.nvim?logo=lua&color=purple)](https://luarocks.org/modules/mimparat132/kube.nvim)
 # kube.nvim
 
 ## Installation
