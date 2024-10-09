@@ -4,7 +4,7 @@ package = "kube"
 version = MODREV .. SPECREV
 
 source = {
-      url = 'git://github.com/mimparat132/kube.nvim.git',
+      url = 'git://github.com/mimparat132/kube.nvim',
       tag = "1.1.0",
 }
 
@@ -24,4 +24,6 @@ dependencies = {
    "lyaml",
    "base64",
 }
-build = {}
+build = {
+    type = "builtin",
+}
